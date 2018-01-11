@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.misrobot.mismarketing.dao.clue.ClueDao">
+
+    <resultMap id="BaseResultMap" type="com.misrobot.mismarketing.pojo.clue.ClueModifyHistory">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="clue_id" jdbcType="INTEGER"
+                property="clueId"/>
+        <result column="modify_date"
+                jdbcType="TIMESTAMP"
+                property="modifyDate"/>
+        <result column="title"
+                jdbcType="VARCHAR"
+                property="title"/>
+        <result column="modify_content"
+                jdbcType="VARCHAR"
+                property="modifyContent"/>
+        <result column="username"
+                jdbcType="VARCHAR"
+                property="username"/>
+    </resultMap>
+
+    <select id="getAllClueHistorys" resultMap="BaseResultMap" parameterType="int">
+        select c.id, c.clue_id,c.modify_date,c.title,c.modify_content,u.username
+        from clue_modify_history c left join mismarketing_user u on c.user_id=u.userid
+        where c.clue_id = #{clueid, jdbcType = INTEGER} ORDER BY c.modify_date DESC
+    </select>
+
+    <insert id="addClueHistory" parameterType="com.misrobot.mismarketing.pojo.clue.ClueModifyHistory">
+        insert into clue_modify_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+
+            <if test="clueId != null">
+                clue_id,
+            </if>
+
+                modify_date,
+
+            <if test="title != null">
+                title,
+            </if>
+
+            <if test="modifyContent != null">
+                modify_content,
+            </if>
+
+            <if test="userId != null">
+               user_id,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="clueId != null">
+                #{clueId, jdbcType=INTEGER},
+            </if>
+
+                 now(),
+
+            <if test="title != null">
+                #{title, jdbcType=VARCHAR},
+            </if>
+
+            <if test="modifyContent != null">
+                #{modifyContent, jdbcType=VARCHAR},
+            </if>
+
+            <if test="userId != null">
+                #{userId, jdbcType=INTEGER},
+            </if>
+
+        </trim>
+    </insert>
+</mapper>

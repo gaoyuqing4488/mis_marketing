@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.misrobot.mismarketing.dao.project.ProjectEntityMapper">
+
+    <resultMap id="BaseResultMap" type="com.misrobot.mismarketing.entity.ProjectEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="project_name"
+                jdbcType="VARCHAR"
+                property="projectname"/>
+        <result column="rate"
+                jdbcType="INTEGER"
+                property="rate"/>
+        <result column="step"
+                jdbcType="INTEGER"
+                property="step"/>
+        <result column="info_progress"
+                jdbcType="VARCHAR"
+                property="infoprogress"/>
+        <result column="difficulty_help"
+                jdbcType="VARCHAR"
+                property="difficultyhelp"/>
+        <result column="current_budget_money"
+                jdbcType="DECIMAL"
+                property="currentbudgetmoney"/>
+        <result column="current_actual_money"
+                jdbcType="DECIMAL"
+                property="currentactualmoney"/>
+        <result column="project_date"
+                jdbcType="TIMESTAMP"
+                property="projectdate"/>
+        <result column="capital_date"
+                jdbcType="TIMESTAMP"
+                property="capitaldate"/>
+        <result column="capital_using_date"
+                jdbcType="TIMESTAMP"
+                property="capitalusingdate"/>
+        <result column="biding_document_date"
+                jdbcType="TIMESTAMP"
+                property="bidingdocumentdate"/>
+        <result column="bill_sign_plan_date"
+                jdbcType="TIMESTAMP"
+                property="billsignplandate"/>
+        <result column="bill_sign_actual_date"
+                jdbcType="TIMESTAMP"
+                property="billsignactualdate"/>
+        <result column="commercial_plan_datev"
+                jdbcType="TIMESTAMP"
+                property="commercialplandate"/>
+        <result column="commercial_actual_date"
+                jdbcType="TIMESTAMP"
+                property="commercialactualdate"/>
+        <result column="majordomo"
+                jdbcType="VARCHAR"
+                property="majordomo"/>
+        <result column="deputy_majordomo"
+                jdbcType="VARCHAR"
+                property="deputymajordomo"/>
+        <result column="project_customer_id"
+                jdbcType="INTEGER"
+                property="projectcustomerid"/>
+        <result column="project_customer"
+                jdbcType="VARCHAR"
+                property="projectcustomer"/>
+        <result column="customer_abbreviation"
+                jdbcType="VARCHAR"
+                property="customerabbreviation"/>
+        <result column="project_number"
+                jdbcType="VARCHAR"
+                property="projectnumber"/>
+        <result column="project_abbreviation"
+                jdbcType="VARCHAR"
+                property="projectabbreviation"/>
+        <result column="project_owner_id"
+                jdbcType="INTEGER"
+                property="projectownerid"/>
+        <result column="project_owner"
+                jdbcType="VARCHAR"
+                property="projectowner"/>
+        <result column="total_budget_money"
+                jdbcType="DECIMAL"
+                property="totalbudgetmoney"/>
+        <result column="budget_money_1"
+                jdbcType="DECIMAL"
+                property="budgetmoney_1"/>
+        <result column="budget_money_2"
+                jdbcType="DECIMAL"
+                property="budgetmoney_2"/>
+        <result column="create_time"
+                jdbcType="TIMESTAMP"
+                property="createtime"/>
+    </resultMap>
+
+    <resultMap id="projectinfoByWeekly" type="com.misrobot.mismarketing.pojo.project.ProjectByWeekly">
+        <id column="id" property="projectId" jdbcType="INTEGER"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+        <result column="project_number" property="projectNum" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="firstFewProject" type="com.misrobot.mismarketing.pojo.project.FirstFewProject">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="project_abbreviation" property="projectAbbreviation" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+            id,
+            project_name,
+            rate,
+            step,
+            info_progress,
+            difficulty_help,
+            current_budget_money,
+            current_actual_money,
+            project_date,
+            capital_date,
+            capital_using_date,
+            biding_document_date,
+            bill_sign_plan_date,
+            bill_sign_actual_date,
+            commercial_plan_date,
+            commercial_actual_date,
+            majordomo,
+            deputy_majordomo,
+            project_owner_id,
+            project_customer_id,
+            project_customer,
+            customer_abbreviation,
+            project_number,
+            project_abbreviation,
+            project_owner,
+            total_budget_money,
+            budget_money_1,
+            budget_money_2,
+            create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="getProjectsCountByPrimaryKey" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select
+        count(1)
+        from project where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllProjectsByUserID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project where project_owner_id = #{userid} order by id asc LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="getProjectsCountByUserID" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select
+        count(1)
+        from project where project_owner_id = #{userid}
+    </select>
+
+    <select id="findAllProjectsByCustomerID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project where project_customer_id = #{customerid} order by id asc LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="findAllProjects" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project
+        order by id asc
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="getAllProjectsCount" resultType="java.lang.Integer">
+        select
+        count(1)
+        from project
+    </select>
+
+    <select id="findByProjectNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project WHERE project_number = #{projectnumber, jdbcType=VARCHAR}
+        order by id asc
+    </select>
+
+    <select id="getCustomerIDByPrimaryKey" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select
+        project_customer_id
+        from project
+        where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from project where id = #{id, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByCustomerID" parameterType="java.lang.Integer">
+        delete from project where project_customer_id = #{customerId, jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.misrobot.mismarketing.entity.ProjectEntity">
+        insert into project
+        ( id,
+          project_name,
+          rate,
+          step,
+          info_progress,
+          difficulty_help,
+          current_budget_money,
+          current_actual_money,
+          project_date,
+          capital_date,
+          capital_using_date,
+          biding_document_date,
+          bill_sign_plan_date,
+          bill_sign_actual_date,
+          commercial_plan_date,
+          commercial_actual_date,
+          majordomo,
+          deputy_majordomo,
+          project_owner_id,
+          project_customer_id,
+          project_customer,
+          customer_abbreviation,
+          project_number,
+          project_abbreviation,
+          project_owner,
+          total_budget_money,
+          budget_money_1,
+          budget_money_2,
+          create_time)
+        values
+        (#{id, jdbcType=INTEGER},
+        #{projectname, jdbcType=VARCHAR},
+        #{rate, jdbcType=INTEGER},
+        #{step, jdbcType=INTEGER},
+        #{infoprogress, jdbcType=VARCHAR},
+        #{difficultyhelp, jdbcType=VARCHAR},
+        #{currentbudgetmoney, jdbcType=DECIMAL},
+        #{currentactualmoney, jdbcType=DECIMAL},
+        #{projectdate, jdbcType=TIMESTAMP},
+        #{capitaldate, jdbcType=TIMESTAMP},
+        #{capitalusingdate, jdbcType=TIMESTAMP},
+        #{bidingdocumentdate, jdbcType=TIMESTAMP},
+        #{billsignplandate, jdbcType=TIMESTAMP},
+        #{billsignactualdate, jdbcType=TIMESTAMP},
+        #{commercialplandate, jdbcType=TIMESTAMP},
+        #{commercialactualdate, jdbcType=TIMESTAMP},
+        #{majordomo, jdbcType=VARCHAR},
+        #{deputymajordomo, jdbcType=VARCHAR},
+        #{projectownerid, jdbcType=INTEGER},
+        #{projectcustomerid, jdbcType=INTEGER},
+        #{projectcustomer, jdbcType=VARCHAR},
+        #{customerabbreviation, jdbcType=VARCHAR},
+        #{projectnumber, jdbcType=VARCHAR},
+        #{projectabbreviation, jdbcType=VARCHAR},
+        #{projectowner, jdbcType=VARCHAR},
+        #{totalbudgetmoney, jdbcType=DECIMAL},
+        #{budgetmoney_1, jdbcType=DECIMAL},
+        #{budgetmoney_2, jdbcType=DECIMAL},
+        #{createtime, jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.misrobot.mismarketing.entity.ProjectEntity">
+        insert into project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="projectname != null">
+                project_name,
+            </if>
+
+            <if test="rate != null">
+                rate,
+            </if>
+
+            <if test="step != null">
+                step,
+            </if>
+
+            <if test="infoprogress != null">
+                info_progress,
+            </if>
+
+            <if test="difficultyhelp != null">
+                difficulty_help,
+            </if>
+
+            <if test="currentbudgetmoney != null">
+                current_budget_money,
+            </if>
+
+            <if test="currentactualmoney != null">
+                current_actual_money,
+            </if>
+
+            <if test="projectdate != null">
+                project_date,
+            </if>
+
+            <if test="capitaldate != null">
+                capital_date,
+            </if>
+
+            <if test="capitalusingdate != null">
+                capital_using_date,
+            </if>
+
+            <if test="bidingdocumentdate != null">
+                biding_document_date,
+            </if>
+
+            <if test="billsignplandate != null">
+                bill_sign_plan_date,
+            </if>
+
+            <if test="billsignactualdate != null">
+                bill_sign_actual_date,
+            </if>
+
+            <if test="commercialplandate != null">
+                commercial_plan_date,
+            </if>
+
+            <if test="commercialactualdate != null">
+                commercial_actual_date,
+            </if>
+
+            <if test="majordomo != null">
+                majordomo,
+            </if>
+
+            <if test="deputymajordomo != null">
+                deputy_majordomo,
+            </if>
+
+            <if test="projectownerid != null">
+                project_owner_id,
+            </if>
+
+            <if test="projectcustomerid != null">
+                project_customer_id,
+            </if>
+
+            <if test="projectcustomer != null">
+                project_customer,
+            </if>
+
+            <if test="customerabbreviation != null">
+                customer_abbreviation,
+            </if>
+
+            <if test="projectnumber != null">
+                project_number,
+            </if>
+
+            <if test="projectabbreviation != null">
+                project_abbreviation,
+            </if>
+
+            <if test="projectowner != null">
+                project_owner,
+            </if>
+
+            <if test="totalbudgetmoney != null">
+                total_budget_money,
+            </if>
+
+            <if test="budgetmoney_1 != null">
+                budget_money_1,
+            </if>
+
+            <if test="budgetmoney_2 != null">
+                budget_money_2,
+            </if>
+
+            <if test="createtime != null">
+                create_time,
+            </if>
+
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="id != null">
+                #{id, jdbcType=INTEGER},
+            </if>
+
+            <if test="projectname != null">
+                #{projectname, jdbcType=INTEGER},
+            </if>
+
+            <if test="rate != null">
+                #{rate, jdbcType=INTEGER},
+            </if>
+
+            <if test="step != null">
+                #{step, jdbcType=INTEGER},
+            </if>
+
+            <if test="infoprogress != null">
+                #{infoprogress, jdbcType=VARCHAR},
+            </if>
+
+            <if test="difficultyhelp != null">
+                #{difficultyhelp, jdbcType=VARCHAR},
+            </if>
+
+            <if test="currentbudgetmoney != null">
+                #{currentbudgetmoney, jdbcType=DECIMAL},
+            </if>
+
+            <if test="currentactualmoney != null">
+                #{currentactualmoney, jdbcType=DECIMAL},
+            </if>
+
+            <if test="projectdate != null">
+                #{projectdate, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="capitaldate != null">
+                #{capitaldate, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="capitalusingdate != null">
+                #{capitalusingdate, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="bidingdocumentdate != null">
+                #{bidingdocumentdate, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="billsignplandate != null">
+                #{billSignplandate, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="billsignactualdate != null">
+                #{billSignactualdate, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="commercialplandate != null">
+                #{commercialplandate, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="commercialactualdate != null">
+                #{commercialactualdate, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="majordomo != null">
+                #{majordomo, jdbcType=VARCHAR},
+            </if>
+
+            <if test="deputymajordomo != null">
+                #{deputymajordomo, jdbcType=VARCHAR},
+            </if>
+
+            <if test="projectownerid != null">
+                #{projectownerid, jdbcType=INTEGER},
+            </if>
+
+            <if test="projectcustomerid != null">
+                #{projectcustomerid, jdbcType=INTEGER},
+            </if>
+
+            <if test="projectcustomer != null">
+                #{projectcustomer, jdbcType=VARCHAR},
+            </if>
+
+            <if test="customerabbreviation != null">
+                #{customerabbreviation, jdbcType=VARCHAR},
+            </if>
+
+            <if test="projectnumber != null">
+                #{projectnumber, jdbcType=VARCHAR},
+            </if>
+
+            <if test="projectabbreviation != null">
+                #{projectabbreviation, jdbcType=VARCHAR},
+            </if>
+
+            <if test="projectowner != null">
+                #{projectowner, jdbcType=VARCHAR},
+            </if>
+
+            <if test="totalbudgetmoney != null">
+                #{totalbudgetmoney, jdbcType=DECIMAL},
+            </if>
+
+            <if test="budgetmoney_1 != null">
+                #{budgetmoney_1, jdbcType=DECIMAL},
+            </if>
+
+            <if test="budgetmoney_2 != null">
+                #{budgetmoney_2, jdbcType=DECIMAL},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime, jdbcType=TIMESTAMP}
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.misrobot.mismarketing.entity.ProjectEntity">
+        update project
+        <set>
+            <if test="projectname != null">
+                project_name = #{projectname, jdbcType=VARCHAR},
+            </if>
+            <if test="rate != null">
+                rate = #{rate,jdbcType=INTEGER},
+            </if>
+            <if test="step != null">
+                step = #{step,jdbcType=INTEGER},
+            </if>
+            <if test="infoprogress != null">
+                info_progress = #{infoprogress,jdbcType=VARCHAR},
+            </if>
+            <if test="difficultyhelp != null">
+                difficulty_help = #{difficultyhelp,jdbcType=VARCHAR},
+            </if>
+            <if test="currentbudgetmoney != null">
+                current_budget_money = #{currentbudgetmoney,jdbcType=DECIMAL},
+            </if>
+            <if test="currentactualmoney != null">
+                current_actual_money = #{currentactualmoney,jdbcType=DECIMAL},
+            </if>
+            <if test="projectdate != null">
+                project_date = #{projectdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="capitaldate != null">
+                capital_date = #{capitaldate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="capitalusingdate != null">
+                capital_using_date = #{capitalusingdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="bidingdocumentdate != null">
+                biding_document_date = #{bidingdocumentdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="billsignplandate != null">
+                bill_sign_plan_date = #{billsignplandate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="billsignactualdate != null">
+                bill_sign_actual_date = #{billsignactualdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="commercialplandate != null">
+                commercial_plan_date = #{commercialplandate,jdbcType=DATE},
+            </if>
+            <if test="commercialactualdate != null">
+                commercial_actual_date = #{commercialactualdate,jdbcType=DATE},
+            </if>
+            <if test="majordomo != null">
+                majordomo = #{majordomo,jdbcType=VARCHAR},
+            </if>
+            <if test="deputymajordomo != null">
+                deputy_majordomo = #{deputymajordomo,jdbcType=VARCHAR},
+            </if>
+            <if test="projectownerid != null">
+                project_owner_id = #{projectownerid,jdbcType=INTEGER},
+            </if>
+            <if test="projectcustomerid != null">
+                project_customer_id = #{projectcustomerid,jdbcType=INTEGER},
+            </if>
+            <if test="projectcustomer != null">
+                project_customer = #{projectcustomer,jdbcType=VARCHAR},
+            </if>
+            <if test="customerabbreviation != null">
+                customer_abbreviation = #{customerabbreviation,jdbcType=VARCHAR},
+            </if>
+            <if test="projectnumber != null">
+                project_number = #{projectnumber,jdbcType=VARCHAR},
+            </if>
+            <if test="projectabbreviation != null">
+                project_abbreviation = #{projectabbreviation,jdbcType=VARCHAR},
+            </if>
+            <if test="projectowner != null">
+                project_owner = #{projectowner,jdbcType=VARCHAR},
+            </if>
+            <if test="totalbudgetmoney != null">
+                total_budget_money = #{totalbudgetmoney,jdbcType=DECIMAL},
+            </if>
+            <if test="budgetmoney_1 != null">
+                budget_money_1 = #{budgetmoney_1,jdbcType=DECIMAL},
+            </if>
+            <if test="budgetmoney_2 != null">
+                budget_money_2 = #{budgetmoney_2,jdbcType=DECIMAL},
+            </if>
+            <if test="createtime != null">
+                create_time = #{createtime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--获取我的所有项目信息-->
+    <select id="getAllProjectByWeekly" parameterType="hashmap" resultMap="projectinfoByWeekly">
+         SELECT id,project_name,project_number from project
+          where project_owner_id = #{userid}
+    </select>
+    <!--一级项目-->
+    <select id="getFirstProject" resultMap="firstFewProject">
+        SELECT id,project_abbreviation from project where  rate = 0
+    </select>
+    <!--二级项目-->
+    <select id="getSecondProject" resultMap="firstFewProject">
+        SELECT id,project_abbreviation from project where  rate = 1
+    </select>
+    <!--重大项目-->
+    <select id="getImportProject" resultMap="firstFewProject">
+        SELECT id,project_abbreviation from project where  rate = 2
+    </select>
+
+    <update id="updateProjectInfos" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update project
+            <set>
+                <if test="item.projectname != null">
+                    project_name = #{item.projectname, jdbcType=VARCHAR},
+                </if>
+                <if test="item.rate != null">
+                    rate = #{item.rate, jdbcType=INTEGER},
+                </if>
+                <if test="item.step != null">
+                    step = #{item.step, jdbcType=INTEGER},
+                </if>
+                <if test="item.infoprogress != null">
+                    info_progress = #{item.infoprogress, jdbcType=VARCHAR},
+                </if>
+                <if test="item.difficultyhelp != null">
+                    difficulty_help = #{item.difficultyhelp, jdbcType=VARCHAR},
+                </if>
+                <if test="item.currentbudgetmoney != null">
+                    current_budget_money = #{item.currentbudgetmoney, jdbcType=DECIMAL},
+                </if>
+                <if test="item.currentactualmoney != null">
+                    current_actual_money = #{item.currentactualmoney, jdbcType=DECIMAL},
+                </if>
+                <if test="item.projectdate != null">
+                    project_date = #{item.projectdate, jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.capitaldate != null">
+                    capital_date = #{item.capitaldate, jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.capitalusingdate != null">
+                    capital_using_date = #{item.capitalusingdate, jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.bidingdocumentdate != null">
+                    biding_document_date = #{item.bidingdocumentdate, jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.billsignplandate != null">
+                    bill_sign_plan_date = #{item.billsignplandate,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.billsignactualdate != null">
+                    bill_sign_actual_date = #{item.billsignactualdate, jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.commercialplandate != null">
+                    commercial_plan_date = #{item.commercialplandate, jdbcType=DATE},
+                </if>
+                <if test="item.commercialactualdate != null">
+                    commercial_actual_date = #{item.commercialactualdate, jdbcType=DATE},
+                </if>
+                <if test="item.majordomo != null">
+                    majordomo = #{item.majordomo,jdbcType=VARCHAR},
+                </if>
+                <if test="item.deputymajordomo != null">
+                    deputy_majordomo = #{item.deputymajordomo, jdbcType=VARCHAR},
+                </if>
+                <if test="item.projectownerid != null">
+                    project_owner_id = #{item.projectownerid, jdbcType=INTEGER},
+                </if>
+                <if test="item.projectcustomerid != null">
+                    project_customer_id = #{item.projectcustomerid, jdbcType=INTEGER},
+                </if>
+                <if test="item.projectcustomer != null">
+                    project_customer = #{item.projectcustomer, jdbcType=VARCHAR},
+                </if>
+                <if test="item.customerabbreviation != null">
+                    customer_abbreviation = #{item.customerabbreviation, jdbcType=VARCHAR},
+                </if>
+                <if test="item.projectnumber != null">
+                    project_number = #{item.projectnumber, jdbcType=VARCHAR},
+                </if>
+                <if test="item.projectabbreviation != null">
+                    project_abbreviation = #{item.projectabbreviation, jdbcType=VARCHAR},
+                </if>
+                <if test="item.projectowner != null">
+                    project_owner = #{item.projectowner, jdbcType=VARCHAR},
+                </if>
+                <if test="item.totalbudgetmoney != null">
+                    total_budget_money = #{item.totalbudgetmoney, jdbcType=DECIMAL},
+                </if>
+                <if test="item.budgetmoney_1 != null">
+                    budget_money_1 = #{item.budgetmoney_1, jdbcType=DECIMAL},
+                </if>
+                <if test="item.budgetmoney_2 != null">
+                    budget_money_2 = #{item.budgetmoney_2, jdbcType=DECIMAL},
+                </if>
+                <if test="item.createtime != null">
+                    create_time = #{item.createtime, jdbcType=TIMESTAMP},
+                </if>
+            </set>
+            where id = #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+</mapper>

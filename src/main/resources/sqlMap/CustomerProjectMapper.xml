@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.misrobot.mismarketing.dao.customerproject.CustomerProjectDao">
+
+    <resultMap id="BaseResultMap" type="com.misrobot.mismarketing.entity.CustomerProjectEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="customer_id"
+                jdbcType="INTEGER"
+                property="customerid"/>
+        <result column="project_id"
+                jdbcType="INTEGER"
+                property="projectid"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        customer_id,
+        project_id
+    </sql>
+
+    <select id="findAllRecords" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_project_info
+    </select>
+
+    <select id="findAllRecordsByCustomerId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_project_info where customer_id = #{customerid, jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllRecordsByProjectId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_project_info where project_id = #{projectid, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_project_info where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByCustomerId" parameterType="java.lang.Integer">
+        delete from customer_project_info where customer_id = #{customerid, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByProjectId" parameterType="java.lang.Integer">
+        delete from customer_project_info where project_id = #{projectid, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from customer_project_info where id = #{id, jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.misrobot.mismarketing.entity.CustomerEntity">
+        insert into customer_project_info
+        (id,
+        customer_id,
+        project_id)
+        values
+        (#{id, jdbcType=INTEGER},
+        #{customerid, jdbcType=INTEGER},
+        #{projectid, jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.misrobot.mismarketing.entity.CustomerEntity">
+        insert into customer_project_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="customerid != null">
+                customer_id,
+            </if>
+
+            <if test="projectid != null">
+                project_id,
+            </if>
+
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="id != null">
+                #{id, jdbcType=INTEGER},
+            </if>
+
+            <if test="customerid != null">
+                #{customerid, jdbcType=INTEGER},
+            </if>
+
+            <if test="projectid != null">
+                #{projectid, jdbcType=INTEGER},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.misrobot.mismarketing.entity.CustomerProjectEntity">
+        update customer_project_info
+        <set>
+            <if test="customerid != null">
+                customer_id = #{customerid,jdbcType=VARCHAR},
+            </if>
+            <if test="projectid != null">
+                project_id = #{projectid,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>

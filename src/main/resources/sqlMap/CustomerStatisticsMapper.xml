@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.misrobot.mismarketing.dao.customer.CustomerStatisticsEntityMapper">
+
+    <resultMap id="BaseResultMap" type="com.misrobot.mismarketing.entity.CustomerStatisticsEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+
+        <result column="id"
+                jdbcType="INTEGER"
+                property="id"/>
+
+        <result column="customer_id"
+                jdbcType="INTEGER"
+                property="customerid"/>
+
+        <result column="year_"
+                jdbcType="INTEGER"
+                property="year_"/>
+
+        <result column="month_"
+                jdbcType="INTEGER"
+                property="month_"/>
+
+        <result column="user_id"
+                jdbcType="INTEGER"
+                property="userid"/>
+
+        <result column="status"
+                jdbcType="INTEGER"
+                property="status"/>
+
+        <result column="create_time"
+                jdbcType="TIMESTAMP"
+                property="createtime"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        customer_id,
+        money,
+        year_,
+        month_,
+        user_id,
+        status,
+        create_time
+    </sql>
+
+    <select id="findAllRecords" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_statistics
+    </select>
+
+    <select id="findByCustomerID" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_statistics where customer_id = #{customerid, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_statistics where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from customer_statistics where id = #{id, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByCustomerId" parameterType="java.lang.Integer">
+        delete from customer_statistics where customer_id = #{customerid, jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.misrobot.mismarketing.entity.CustomerStatisticsEntity">
+        insert into customer_statistics
+            (id,
+            customer_id,
+            money,
+            year_,
+            month_,
+            user_id,
+            status,
+            create_time)
+        values
+            (#{id, jdbcType=INTEGER},
+            #{customerid, jdbcType=INTEGER},
+            #{money, jdbcType=DECIMAL},
+            #{year_, jdbcType=INTEGER},
+            #{month_, jdbcType=INTEGER},
+            #{userid, jdbcType=INTEGER},
+            #{status, jdbcType=INTEGER},
+            #{createtime, jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.misrobot.mismarketing.entity.CustomerStatisticsEntity">
+        insert into customer_statistics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="customerid != null">
+                customer_id,
+            </if>
+
+            <if test="money != null">
+                money,
+            </if>
+
+            <if test="year_ != null">
+                year_,
+            </if>
+
+            <if test="month_ != null">
+                month_,
+            </if>
+
+            <if test="userid != null">
+                user_id,
+            </if>
+
+            <if test="status != null">
+                status,
+            </if>
+
+            <if test="createtime != null">
+                create_time,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id, jdbcType=INTEGER},
+            </if>
+
+            <if test="customerid != null">
+                #{customerid, jdbcType=INTEGER},
+            </if>
+
+            <if test="money != null">
+                #{money, jdbcType=DECIMAL},
+            </if>
+
+            <if test="year_ != null">
+                #{year_, jdbcType=INTEGER},
+            </if>
+
+            <if test="month_ != null">
+                #{month_,  jdbcType=INTEGER},
+            </if>
+
+            <if test="userid != null">
+                #{userid, jdbcType=INTEGER},
+            </if>
+
+            <if test="status != null">
+                #{status, jdbcType=INTEGER},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime, jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.misrobot.mismarketing.entity.CustomerStatisticsEntity">
+        update customer_statistics
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="customerid != null">
+                customer_id = #{customerid,jdbcType=INTEGER},
+            </if>
+            <if test="money != null">
+                money = #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="year_ != null">
+                year_ = #{year_,jdbcType=INTEGER},
+            </if>
+            <if test="month_ != null">
+                month_ = #{month_,jdbcType=INTEGER},
+            </if>
+            <if test="userid != null">
+                user_id = #{userid, jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status, jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                create_time = #{createtime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByCustomerID" parameterType="com.misrobot.mismarketing.entity.CustomerStatisticsEntity">
+        update customer_statistics
+        <set>
+            <!--<if test="id != null">-->
+            <!--id = #{id,jdbcType=INTEGER},-->
+            <!--</if>-->
+            <if test="customerid != null">
+                customer_id = #{customerid,jdbcType=INTEGER},
+            </if>
+            <if test="money != null">
+                money = #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="year_ != null">
+                year_ = #{year_,jdbcType=INTEGER},
+            </if>
+            <if test="month_ != null">
+                month_ = #{month_,jdbcType=INTEGER},
+            </if>
+            <if test="userid != null">
+                user_id = #{userid, jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status, jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                create_time = #{createtime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where customer_id = #{customerid, jdbcType=INTEGER} and year_ = #{year_, jdbcType=INTEGER}
+    </update>
+
+    <!--获取每年的客户总投资额-->
+    <select id="getCustomerStatisticsByYear"
+            resultType="com.misrobot.mismarketing.pojo.customerStatistics.CustomerStatisticsInfo">
+        SELECT sum(money) as money,year_ as years from  customer_statistics
+        where year_>=(year(now())-1) and year_ &lt;=(year(now())+2)  GROUP BY year_
+    </select>
+
+    <!--我的客户投资额 -->
+    <select id="getMyCustomerStatisticsByYear" parameterType="hashmap"
+            resultType="com.misrobot.mismarketing.pojo.customerStatistics.CustomerStatisticsInfo">
+        SELECT sum(money) as money,year_ as years from  customer_statistics
+        where year_>=(year(now())-1) and year_ &lt;=(year(now())+2) and user_id=#{userid}  GROUP BY year_
+    </select>
+</mapper>

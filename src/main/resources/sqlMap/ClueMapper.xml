@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.misrobot.mismarketing.dao.clue.ClueDao">
+    <resultMap id="allClues" type="com.misrobot.mismarketing.pojo.clue.ClueList">
+
+        <id column="id" property="id" jdbcType="INTEGER"/>
+
+        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
+
+        <result column="district_id" property="districtId" jdbcType="INTEGER"/>
+
+        <result column="contact_name" property="contactName" jdbcType="VARCHAR"/>
+
+        <result column="districtname" property="districtname" jdbcType="VARCHAR"/>
+
+        <result column="customer_type" property="customerType" jdbcType="INTEGER"/>
+
+        <result column="department" property="department" jdbcType="VARCHAR"/>
+
+        <result column="districtname" property="districtname" jdbcType="VARCHAR"/>
+
+        <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+
+        <result column="customer_rate" property="customerRate" jdbcType="INTEGER"/>
+
+        <result column="level" property="level" jdbcType="INTEGER"/>
+
+        <result column="customer_initiative" property="customerInitiative" jdbcType="INTEGER"/>
+
+        <result column="information_sources" property="informationSources" jdbcType="VARCHAR"/>
+
+        <result column="clue_info" property="clueInfo" jdbcType="VARCHAR"/>
+
+        <result column="progress" property="progress" jdbcType="VARCHAR"/>
+
+        <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+
+        <result column="creater_id" property="createrId" jdbcType="INTEGER"/>
+
+        <result column="customer_initiative" property="customerInitiative" jdbcType="VARCHAR"/>
+
+        <result column="manager_id" property="managerId" jdbcType="INTEGER"/>
+
+        <result column="managername" property="managername" jdbcType="VARCHAR"/>
+
+        <result column="creatername" property="creatername" jdbcType="VARCHAR"/>
+
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+
+        <result column="status" property="status" jdbcType="INTEGER"/>
+
+    </resultMap>
+
+    <insert id="addClue" parameterType="com.misrobot.mismarketing.pojo.clue.Clue"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into clue
+        <trim suffixOverrides="," suffix=")" prefix="(">
+
+            <if test="companyName != null">company_name,</if>
+
+            <if test="districtId != null">district_id,</if>
+
+            <if test="contactName != null">contact_name,</if>
+
+            <if test="customerType != null">customer_type,</if>
+
+            <if test="department != null">department,</if>
+
+            <if test="telephone != null">telephone,</if>
+
+            <if test="customerRate != null">customer_rate,</if>
+
+            <if test="level != null">level,</if>
+
+            <if test="customerInitiative != null">customer_initiative,</if>
+
+            <if test="informationSources != null">information_sources,</if>
+
+            <if test="clueInfo != null">clue_info,</if>
+
+            <if test="progress != null">progress,</if>
+
+            <if test="createrId != null">creater_id,</if>
+
+            <if test="managerId != null">manager_id,</if>
+
+            <if test="updateTime != null">update_time,</if>
+
+            <if test="status != null">status,</if>
+
+            create_time,
+
+        </trim>
+
+        <trim suffixOverrides="," suffix=")" prefix="values (">
+
+            <if test="companyName != null">#{companyName},</if>
+
+            <if test="districtId != null">#{districtId},</if>
+
+            <if test="contactName != null">#{contactName},</if>
+
+            <if test="customerType != null">#{customerType},</if>
+
+            <if test="department != null">#{department},</if>
+
+            <if test="telephone != null">#{telephone},</if>
+
+            <if test="customerRate != null">#{customerRate},</if>
+
+            <if test="level != null">#{level},</if>
+
+            <if test="customerInitiative != null">#{customerInitiative},</if>
+
+            <if test="informationSources != null">#{informationSources},</if>
+
+            <if test="clueInfo != null">#{clueInfo},</if>
+
+            <if test="progress != null">#{progress},</if>
+
+            <if test="createrId != null">#{createrId},</if>
+
+            <if test="managerId != null">#{managerId},</if>
+
+            <if test="updateTime != null">#{updateTime},</if>
+
+            <if test="status != null">#{status},</if>
+
+            now(),
+
+        </trim>
+    </insert>
+
+    <select id="getAllClues" parameterType="com.misrobot.mismarketing.pojo.clue.ClueListReq" resultMap="allClues">
+        select c.id,c.company_name,c.district_id,d.name as districtname ,c.contact_name,c.customer_type,c.department,
+        c.telephone,c.level,c.customer_rate,c.customer_initiative,c.information_sources,c.clue_info,c.progress,
+        c.creater_id,m.username as creatername,c.manager_id,u.username as
+        managername,c.create_time,c.update_time,c.status from clue c
+        left join mismarketing_user m on c.creater_id=m.userid
+        left join mismarketing_user u on c.manager_id=u.userid left join district d on c.district_id=d.id
+        <where>
+            1=1
+            <if test="userid!=null">
+                and c.creater_id=#{userid} or c.manager_id=#{userid}
+            </if>
+
+            <if test="companyName!=null">
+                and c.company_name like concat('%',#{companyName},'%')
+            </if>
+
+            <if test="updateTime!=null">
+                and c.update_time=#{updateTime}
+            </if>
+
+            <if test="status!=null">
+                and c.status=#{status}
+            </if>
+
+            <if test="level!=null">
+                and c.level=#{level}
+            </if>
+
+            <if test="customerRate">
+                and c.customer_rate=#{customerRate}
+            </if>
+
+            <if test="customerType">
+                and c.customer_type=#{customerType}
+            </if>
+        </where>
+        order by c.create_time desc
+        <if test="requestpage != null">
+            LIMIT #{requestpage}, #{sizeperpage}
+        </if>
+    </select>
+
+    <select id="getClueCounts" parameterType="com.misrobot.mismarketing.pojo.clue.ClueListReq" resultType="int">
+        select count(1) from clue
+        <where>
+            1=1
+            <if test="userid!=null">
+                and creater_id=#{userid} or manager_id=#{userid}
+            </if>
+            <if test="companyName!=null">
+                and company_name like concat('%',#{companyName},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getClueInfoById" parameterType="hashmap" resultMap="allClues">
+        select c.id,c.company_name,c.district_id,d.name as districtname ,c.contact_name,c.customer_type,c.department,
+        c.telephone,c.customer_rate,c.level,c.customer_initiative,c.information_sources,c.clue_info,c.progress,
+        c.creater_id,m.username as creatername,c.manager_id,u.username as
+        managername,c.create_time,c.update_time,c.status from clue c
+        left join mismarketing_user m on c.creater_id=m.userid
+        left join mismarketing_user u on c.manager_id=u.userid left join district d on c.district_id=d.id
+        <where>
+            c.id=#{id}
+        </where>
+    </select>
+
+    <update id="updateClue" parameterType="com.misrobot.mismarketing.pojo.clue.Clue">
+        update clue
+        <set>
+            <if test="companyName!=null">company_name=#{companyName},</if>
+
+            <if test="districtId!=null">district_id=#{districtId},</if>
+
+            <if test="contactName!=null">contact_name=#{contactName},</if>
+
+            <if test="customerType!=null">customer_type=#{customerType},</if>
+
+            <if test="department!=null">department=#{department},</if>
+
+            <if test="telephone!=null">telephone=#{telephone},</if>
+
+            <if test="customerRate!=null">customer_rate=#{customerRate},</if>
+
+            <if test="level!=null">level=#{level},</if>
+
+            <if test="customerInitiative!=null">customer_initiative=#{customerInitiative},</if>
+
+            <if test="informationSources != null">information_sources=#{informationSources},</if>
+
+            <if test="clueInfo != null">clue_info=#{clueInfo},</if>
+
+            <if test="progress != null">progress=#{progress},</if>
+
+            <if test="createrId!=null">creater_id=#{createrId},</if>
+
+            <if test="managerId!=null">manager_id=#{managerId},</if>
+
+            <if test="status!=null">status=#{status},</if>
+
+            update_time=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="getCountsByCompanyName" parameterType="hashmap" resultType="int">
+        select count(1) from clue where company_name=#{companyName}
+    </select>
+</mapper>

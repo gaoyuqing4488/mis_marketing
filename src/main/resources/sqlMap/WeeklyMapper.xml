@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.misrobot.mismarketing.dao.weekly.WeeklyDao">
+
+    <resultMap id="allWeeklys" type="com.misrobot.mismarketing.pojo.weekly.AllWeeklys">
+
+        <id column="id" property="id" jdbcType="INTEGER"/>
+
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+
+        <result column="userid" property="user_id" jdbcType="BIGINT"/>
+
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+
+        <result column="districtName" property="districtName" jdbcType="BIGINT"/>
+
+        <result column="sales" property="sales" jdbcType="DECIMAL"/>
+
+    </resultMap>
+
+    <resultMap id="weeklyProjectInfo" type="com.misrobot.mismarketing.pojo.weekly.WeeklyProject">
+        <id column="project_id" property="projectId" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!--查询所有周报的列表-->
+    <select id="getAllWeeklys" resultMap="allWeeklys"
+            parameterType="com.misrobot.mismarketing.pojo.weekly.WeeklyListReq">
+        SELECT a.id ,a.name,u.userid,u.username,d.`name` as districtName,a.sales FROM weekly a LEFT JOIN
+        mismarketing_user u on a.user_id=u.userid LEFT JOIN district d on d.id=u.district_id
+        <where>
+            1=1
+            <if test="username!=null">
+                and u.username LIKE concat('%',#{username},'%')
+            </if>
+            <if test="begintime!=null">
+                and a.create_time >= #{begintime}
+            </if>
+            <if test="endtime!=null">
+                and a.create_time &lt;= #{endtime}
+            </if>
+            <if test="districtname!=null">
+                and d.name=#{districtname}
+            </if>
+            <if test="userid!=null">
+                and a.user_id=#{userid}
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+        <if test="orderby == 1">
+            and b.sales desc
+        </if>
+        <if test="orderby == 0">
+            and b.sales
+        </if>
+        <if test="requestpage != null">
+            LIMIT #{requestpage}, #{sizeperpage}
+        </if>
+    </select>
+
+    <select id="getAllcounts" parameterType="com.misrobot.mismarketing.pojo.weekly.WeeklyListReq" resultType="int">
+        SELECT count(a.id) FROM weekly a LEFT JOIN
+        mismarketing_user u on a.user_id=u.userid LEFT JOIN district d on d.id=u.district_id
+        <where>
+            1=1
+            <if test="username!=null">
+                and a.name LIKE concat('%',#{username},'%')
+            </if>
+            <if test="begintime!=null">
+                and a.create_time >= #{begintime}
+            </if>
+            <if test="endtime!=null">
+                and a.create_time &lt;= #{endtime}
+            </if>
+            <if test="districtname!=null">
+                and d.name=#{districtname}
+            </if>
+            <if test="userid!=null">
+                and a.user_id=#{userid}
+            </if>
+        </where>
+    </select>
+
+    <!--周报项目的详情-->
+    <select id="getWeeklyProject" parameterType="hashmap" resultMap="weeklyProjectInfo">
+        SELECT project_id,content  from weekly_info
+        where weekly_id =
+        (SELECT id from weekly where create_time=(SELECT max(create_time) from weekly where user_id=#{userid}))
+    </select>
+
+    <insert id="addWeekly" parameterType="com.misrobot.mismarketing.pojo.weekly.Weekly"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO weekly
+
+        <trim suffixOverrides="," suffix=")" prefix="(">
+
+            <if test="user_id != null">user_id,</if>
+
+            <if test="name != null">name,</if>
+
+            <if test="sales != null">sales,</if>
+
+            create_time,
+        </trim>
+
+        <trim suffixOverrides="," suffix=")" prefix="values (">
+
+            <if test="user_id != null">#{user_id,jdbcType=BIGINT},</if>
+
+            <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+
+            <!--<if test="username != null"> #{username,jdbcType=TIMESTAMP}, </if>-->
+            <if test="sales != null">#{sales},</if>
+            now(),
+        </trim>
+    </insert>
+
+    <!--修改周报-->
+    <update id="updateWeekly" parameterType="com.misrobot.mismarketing.pojo.weekly.Weekly">
+        UPDATE weekly
+        <set>
+            <if test="sales!=null">sales=#{sales},</if>
+            update_time=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--批量修改周报-->
+    <update id="updateWeeklyList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update weekly
+            <set>
+                sales = #{item.sales},
+                update_time=now()
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+    <!--某个周报的详细信息-->
+    <select id="getWeeklyInfoById" parameterType="int"
+            resultType="com.misrobot.mismarketing.pojo.weekly.WeeklyResponse">
+        SELECT w.id,w.name,i.content,i.project_id from weekly w LEFT JOIN weekly_info i on w.id=i.weekly_id where w.id=#{id}
+    </select>
+
+    <delete id="deleteWeekly" parameterType="int">
+        delete from weekly where id=#{id}
+    </delete>
+
+    <!--看看最近这周是否已写周报-->
+    <select id="getNewWeeklyCounts" parameterType="java.lang.Long" resultType="java.lang.String">
+        SELECT name from weekly where id=(select	max(id) from weekly where user_id=#{userid})
+    </select>
+
+    <select id="getWeeklyUserInfo" parameterType="int"
+            resultType="com.misrobot.mismarketing.pojo.weekly.WeeklyUserInfo">
+        SELECT m.username,w.create_time as createTime FROM weekly w left join mismarketing_admin_user m on w.user_id=m.userid where w.id=#{id}
+    </select>
+</mapper>

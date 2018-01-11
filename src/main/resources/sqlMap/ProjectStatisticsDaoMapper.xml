@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--<mapper namespace="com.misrobot.mismarketing.dao.project.ProjectStatisticsEntityMapper">-->
+<mapper namespace="com.misrobot.mismarketing.dao.projectStatistics.ProjectStatisticsDao">
+    <resultMap id="BaseResultMap" type="com.misrobot.mismarketing.entity.ProjectStatisticsEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+
+        <result column="id"
+                jdbcType="INTEGER"
+                property="id"/>
+
+        <result column="project_id"
+                jdbcType="INTEGER"
+                property="projectid"/>
+
+        <result column="money"
+                jdbcType="DECIMAL"
+                property="money"/>
+
+        <result column="year_"
+                jdbcType="INTEGER"
+                property="year_"/>
+
+        <result column="month_"
+                jdbcType="INTEGER"
+                property="month_"/>
+
+        <result column="status"
+                jdbcType="INTEGER"
+                property="status"/>
+
+        <result column="create_time"
+                jdbcType="TIMESTAMP"
+                property="createtime"/>
+
+        <result column="user_id"
+                jdbcType="INTEGER"
+                property="userid"/>
+    </resultMap>
+
+    <resultMap id="topUserInfos" type="com.misrobot.mismarketing.pojo.projectStatistics.TopUserInfo">
+
+        <id column="userid" property="id" jdbcType="BIGINT"/>
+
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+
+        <result column="name" property="districtName" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        project_id,
+        money,
+        year_,
+        month_,
+        status,
+        create_time,
+        user_id
+    </sql>
+
+    <select id="findAllRecords" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_statistics
+    </select>
+
+    <select id="findByUserID" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_statistics where user_id = #{userid, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_statistics where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <!--获取前10名销售人员信息-->
+    <select id="getTopUsers" resultMap="topUserInfos">
+        SELECT m.userid,m.username,d.name FROM mismarketing_user m  JOIN (SELECT user_id FROM project_statistics
+        WHERE year_=YEAR(NOW()) GROUP BY user_id ORDER BY sum(money) DESC
+        limit 0,10) u ON m.userid=u.user_id
+        LEFT JOIN district d ON m.district_id=d.id
+    </select>
+
+    <!--获取今年总销售额 -->
+    <select id="getNewYearStatistics" resultType="java.math.BigDecimal">
+        SELECT ifnull(sum(money),0) as money FROM project_statistics WHERE year_= YEAR(NOW())
+        --         and month_=(select max(month_) from project_statistics WHERE  year_= YEAR(NOW()))
+    </select>
+
+    <!--获取每年的项目销售额-->
+    <select id="getProjectStatisticsByYear"
+            resultType="com.misrobot.mismarketing.pojo.customerStatistics.CustomerStatisticsInfo">
+        SELECT sum(money) as money,year_ as years FROM  project_statistics
+        WHERE year_>=(year(now())-1) AND year_ &lt;=(year(now())+2)
+
+        GROUP BY year_
+    </select>
+
+    <!--获取近2年的每月项目销售额-->
+    <select id="getProjectStatisticsByMonth"
+            resultType="com.misrobot.mismarketing.pojo.customerStatistics.CustomerStatisticsInfo">
+        -- SELECT sum(money) as money,year_ as years, month_ as months from customer_statistics where
+        -- year_>=year(now()) and year_&lt;=(year(now())+1) GROUP BY year_,month_
+        SELECT sum(money) as money,year_ as years, month_ as months FROM project_statistics WHERE
+        year_>=year(now()) AND year_ &lt;=(year(now())+1) GROUP BY year_,month_
+    </select>
+
+    <!--我的今年预计销售总额-->
+    <select id="getMyNewYearStatistics" resultType="java.math.BigDecimal" parameterType="hashmap">
+        SELECT ifnull(sum(money),0) as money FROM project_statistics WHERE year_= YEAR(NOW())
+        --         and month_=(select max(month_) from project_statistics WHERE  year_= YEAR(NOW())
+        AND user_id=#{userid}
+    </select>
+
+    <!--今年预计销售额最高的销售员-->
+    <select id="getTopProjectStatistics" resultType="com.misrobot.mismarketing.pojo.projectStatistics.TopSalesInfo">
+        --           SELECT max(money) from project_statistics where year_= YEAR(NOW())
+        --           and month_=(select max(month_) from project_statistics WHERE  year_= YEAR(NOW()))
+        -- GROUP  by user_id
+        SELECT sum(money)as sales,user_id as userid  FROM project_statistics WHERE year_= YEAR(NOW())
+        GROUP  by user_id ORDER BY sales desc LIMIT 0,1
+    </select>
+
+    <!--获取我的近3年的预计销售额-->
+    <select id="getMyProjectStatisticsByYear" parameterType="hashmap" resultType="com.misrobot.mismarketing.pojo.customerStatistics.CustomerStatisticsInfo">
+        SELECT sum(money) as money,year_ as years from  project_statistics
+        WHERE year_>=(year(now())-1)   AND year_ &lt;=(year(now())+2) AND user_id=#{userid}
+        GROUP BY year_
+    </select>
+
+    <!--获取我的近2年的每月销售额-->
+    <select id="getMyProjectStatisticsByMonth"
+            resultType="com.misrobot.mismarketing.pojo.customerStatistics.CustomerStatisticsInfo">
+        SELECT sum(money) as money, year_ as years, month_ as months FROM project_statistics WHERE
+        year_>=year(now()) AND year_ &lt;=(year(now())+1) AND user_id=#{userid} GROUP BY year_,month_
+    </select>
+
+
+    <!--我的客户项目统计-->
+    <select id="getMyProjectMoney" parameterType="hashmap" resultType="com.misrobot.mismarketing.pojo.projectStatistics.MyCustomerProjectStatistics">
+        select ifnull(sum(total_budget_money), 0) as total_budget_money, ifnull(sum(current_budget_money), 0) as current_budget_money,
+        ifnull(sum(budget_money_1), 0) as budget_money_1,
+        ifnull(sum(budget_money_2), 0) as budget_money_2,
+        ifnull(sum(current_actual_money), 0) as current_actual_money
+         from project where id in(
+        select project_id from project_statistics where user_id=#{userid})
+    </select>
+
+
+    <!--公司的客户项目统计-->
+    <select id="getAllProjectMoney"  resultType="com.misrobot.mismarketing.pojo.projectStatistics.MyCustomerProjectStatistics">
+        select ifnull(sum(total_budget_money),0) as total_budget_money ,ifnull(sum(current_budget_money),0) as current_budget_money,
+        ifnull(sum(budget_money_1),0) as budget_money_1,
+        ifnull(sum(budget_money_2),0) as budget_money_2,
+        ifnull(sum(current_actual_money),0) as current_actual_money
+        from project where id in(
+        select project_id from project_statistics )
+    </select>
+</mapper>

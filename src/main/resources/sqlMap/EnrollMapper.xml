@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.misrobot.mismarketing.dao.enroll.EnrollDao">
+
+    <insert id="addEnRoll" parameterType="com.misrobot.mismarketing.pojo.enroll.Enroll"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into enroll
+        <trim suffixOverrides="," suffix=")" prefix="(">
+
+            <if test="username != null">username,</if>
+
+            <if test="schoolname != null">schoolname,</if>
+
+            <if test="classname != null">classname,</if>
+
+            <if test="major != null">major,</if>
+
+            <if test="telephone != null">telephone,</if>
+
+            <if test="mail != null">mail,</if>
+
+            <if test="areaid != null">areaid,</if>
+
+            <if test="contestitem != null">contestitem,</if>
+
+            <if test="userid != null">userid,</if>
+
+            createtime,
+
+        </trim>
+        <trim suffixOverrides="," suffix=")" prefix="values (">
+
+            <if test="username != null">#{username},</if>
+
+            <if test="schoolname != null">#{schoolname},</if>
+
+            <if test="classname != null">#{classname},</if>
+
+            <if test="major != null">#{major},</if>
+
+            <if test="telephone != null">#{telephone},</if>
+
+            <if test="mail != null">#{mail},</if>
+
+            <if test="areaid != null">#{areaid},</if>
+
+            <if test="contestitem != null">#{contestitem},</if>
+
+            <if test="userid != null">#{userid},</if>
+
+            now(),
+
+        </trim>
+    </insert>
+
+    <select id="getCountByUserid" parameterType="hashmap" resultType="int">
+        select count(1) from enroll where userid=#{userid}
+    </select>
+</mapper>

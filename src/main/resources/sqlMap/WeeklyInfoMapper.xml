@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.misrobot.mismarketing.dao.weekly.WeeklyInfoDao">
+
+    <insert id="addWeeklyInfo" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            insert into weekly_info (project_id, weekly_id,content)
+            values(#{item.project_id,jdbcType=INTEGER}, #{item.weekly_id,jdbcType=INTEGER},#{item.content})
+        </foreach>
+    </insert>
+
+
+    <!--修改周报信息-->
+    <update id="updateWeeklyInfo" parameterType="com.misrobot.mismarketing.pojo.weekly.WeeklyInfo">
+        UPDATE  weekly_info
+        <set>
+            <if test="content!=null"> content=#{item.content},</if>
+        </set>
+        where id = #{item.weekly_id} and   project_id = #{item.project_id}
+    </update>
+
+
+    <!--批量修改周报信息-->
+    <update id="updateWeeklyInfoList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update weekly_info
+            <set>
+                content=#{item.content},
+            </set>
+            where weekly_id = #{item.weekly_id} and   project_id = #{item.project_id}
+        </foreach>
+    </update>
+
+
+    <delete id="deleteWeeklyInfo" parameterType="hashmap">
+        delete from weekly_info where weekly_id=#{weekly_id} and project_id=#{project_id}
+    </delete>
+
+
+    <delete id="deleteWeeklyInfos"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            delete from weekly_info
+            where weekly_id=#{item.weekly_id}
+        </foreach>
+    </delete>
+</mapper>

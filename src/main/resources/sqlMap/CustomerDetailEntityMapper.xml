@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.misrobot.mismarketing.dao.customer.CustomerDetailEntityMapper">
+
+    <resultMap id="BaseResultMap" type="com.misrobot.mismarketing.entity.CustomerDetailEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+
+        <result column="customer_id"
+                jdbcType="INTEGER"
+                property="customerid"/>
+
+        <result column="customer_owner_id"
+                jdbcType="INTEGER"
+                property="customerownerid"/>
+
+        <result column="info_type"
+                jdbcType="INTEGER"
+                property="infotype"/>
+
+        <result column="sub_info_type"
+                jdbcType="INTEGER"
+                property="subinfotype"/>
+
+        <result column="sub_info_content"
+                jdbcType="VARCHAR"
+                property="subinfocontent"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        customer_id,
+        customer_owner_id,
+        info_type,
+        sub_info_type,
+        sub_info_content
+    </sql>
+
+    <select id="findAllRecords" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_detail_info
+    </select>
+
+    <select id="findAllRecordsByUserID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_detail_info where customer_owner_id = #{userid, jdbcType=INTEGER}
+    </select>
+
+    <select id="findByCustomerID" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_detail_info where customer_id = #{customerid, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_detail_info where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from customer_detail_info where id = #{id, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByCustomerId" parameterType="java.lang.Integer">
+        delete from customer_detail_info where customer_id = #{customerid, jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.misrobot.mismarketing.entity.CustomerDetailEntity">
+        insert into customer_detail_info
+            (id,
+             customer_id,
+             customer_owner_id,
+             info_type,
+             sub_info_type
+             sub_info_content)
+        values
+            (#{id, jdbcType=INTEGER},
+            #{customerid, jdbcType=INTEGER},
+            #{customer_owner_id, jdbcType=INTEGER},
+            #{infotype, jdbcType=INTEGER},
+            #{subinfotype, jdbcType=INTEGER},
+            #{subinfocontent})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.misrobot.mismarketing.entity.CustomerDetailEntity">
+        insert into customer_detail_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="customerid != null">
+                customer_id,
+            </if>
+
+            <if test="customerownerid != null">
+                customer_owner_id,
+            </if>
+
+            <if test="infotype != null">
+                info_type,
+            </if>
+
+            <if test="subinfotype != null">
+                sub_info_type,
+            </if>
+
+            <if test="subinfocontent != null">
+                sub_info_content,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id, jdbcType=INTEGER},
+            </if>
+
+            <if test="customerid != null">
+                #{customerid, jdbcType=INTEGER},
+            </if>
+
+            <if test="customerownerid != null">
+                #{customerownerid, jdbcType=INTEGER},
+            </if>
+
+            <if test="infotype != null">
+                #{infotype, jdbcType=INTEGER},
+            </if>
+
+            <if test="subinfotype != null">
+                #{subinfotype, jdbcType=INTEGER},
+            </if>
+
+            <if test="subinfocontent != null">
+                #{subinfocontent},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.misrobot.mismarketing.entity.CustomerDetailEntity">
+        update customer_detail_info
+        <set>
+            <if test="customerid != null">
+                customer_id = #{customerid,jdbcType=INTEGER},
+            </if>
+
+            <if test="customerownerid != null">
+                customer_owner_id = #{customerownerid,jdbcType=INTEGER},
+            </if>
+
+            <if test="infotype != null">
+                info_type = #{infotype, jdbcType=INTEGER},
+            </if>
+            <if test="subinfotype != null">
+                sub_info_type = #{subinfotype, jdbcType=INTEGER},
+            </if>
+            <if test="subinfocontent != null">
+                sub_info_content = #{subinfocontent},
+            </if>
+        </set>
+        where id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <update id="updateSubInfoContent" parameterType="com.misrobot.mismarketing.entity.CustomerDetailEntity">
+        update customer_detail_info
+        <set>
+            <if test="subinfocontent != null">
+                sub_info_content = #{subinfocontent},
+            </if>
+        </set>
+        where sub_info_type = #{subinfotype, jdbcType=INTEGER} AND info_type =
+        #{infotype, jdbcType=INTEGER} AND customer_id = #{customerid, jdbcType=INTEGER} AND customer_owner_id =
+        #{customerownerid, jdbcType=INTEGER}
+    </update>
+
+</mapper>

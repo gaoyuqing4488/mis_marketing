@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.misrobot.mismarketing.dao.district.DistrictDao">
+
+    <select id="getAllDistricts" resultType="com.misrobot.mismarketing.pojo.district.DistrictInfo" parameterType="hashmap">
+      select id,name from district  where 1=1
+        <if test="name!=null">
+            and name like concat('%',#{name},'%')
+        </if>
+    </select>
+
+    <!--获取所有父节点下的子节点-->
+    <select id="getDistrictChildren" resultType="com.misrobot.mismarketing.pojo.district.DistrictInfo" parameterType="int">
+        SELECT  id,name,province_id from district where province_id=#{pid}
+    </select>
+</mapper>

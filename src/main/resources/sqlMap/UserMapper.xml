@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.misrobot.mismarketing.dao.enroll.UserDao">
+
+    <insert id="addUser" parameterType="com.misrobot.mismarketing.pojo.enroll.User"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into user
+        <trim suffixOverrides="," suffix=")" prefix="(">
+
+            <if test="username != null">username,</if>
+
+            <if test="pwd != null">pwd,</if>
+
+            <if test="nickname != null">nickname,</if>
+
+            createtime,
+
+        </trim>
+        <trim suffixOverrides="," suffix=")" prefix="values (">
+
+            <if test="username != null">#{username},</if>
+
+            <if test="pwd != null">#{pwd},</if>
+
+            <if test="nickname != null">#{nickname},</if>
+
+            now(),
+
+        </trim>
+    </insert>
+
+    <select id="getCountsByUsername" parameterType="hashmap" resultType="int">
+        select count(1) from user where username=#{username}
+    </select>
+
+    <select id="loginUser" parameterType="com.misrobot.mismarketing.pojo.enroll.User"
+            resultType="com.misrobot.mismarketing.pojo.enroll.User">
+        select id,username,pwd,nickname from user where username=#{username} and pwd=#{pwd}
+    </select>
+
+
+</mapper>

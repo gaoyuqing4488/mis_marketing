@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.misrobot.mismarketing.dao.mismarketing.MismarketingUserDao">
+
+    <resultMap id="BaseResultMap" type="com.misrobot.mismarketing.pojo.mismarketing.dao.MismarketingUser">
+        <id column="userid" property="userid" jdbcType="BIGINT"/>
+        <result column="loginname" property="loginname" jdbcType="VARCHAR"/>
+        <result column="password" property="pwd" jdbcType="VARCHAR"/>
+        <!--<result column="is_std" property="isstd" jdbcType="DECIMAL" />-->
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="DECIMAL"/>
+        <result column="isfirst" property="isfirst" jdbcType="DECIMAL"/>
+        <result column="status" property="status" jdbcType="DECIMAL"/>
+        <result column="logintime" property="logintime" jdbcType="TIMESTAMP"/>
+        <result column="expiretime" property="expiretime" jdbcType="TIMESTAMP"/>
+        <result column="salt" property="salt" jdbcType="VARCHAR"/>
+        <result column="isupdate" property="isupdate" jdbcType="DECIMAL"/>
+        <result column="districtid" property="districtid" jdbcType="INTEGER"/>
+        <result column="districtname" property="districtName" jdbcType="VARCHAR"/>
+        <result column="pid" property="provinceid" jdbcType="INTEGER"/>
+        <result column="pname" property="provincename" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="UserResultMap" type="com.misrobot.mismarketing.pojo.mismarketing.dao.ActivateUserSql">
+
+        <id column="userid" property="userid" jdbcType="BIGINT"/>
+
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+
+        <result column="loginname" property="loginname" jdbcType="VARCHAR"/>
+
+        <result column="expiretime" property="expiretime" jdbcType="TIMESTAMP"/>
+
+        <result column="type" property="type" jdbcType="DECIMAL"/>
+
+        <result column="activateDay" property="activateDay" jdbcType="INTEGER"/>
+
+        <result column="districtid" property="districtid" jdbcType="INTEGER"/>
+
+        <result column="districtname" property="districtName" jdbcType="VARCHAR"/>
+
+        <result column="pid" property="pid" jdbcType="INTEGER"/>
+
+        <result column="pname" property="pname" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <resultMap id="UserDistrictInfo" type="com.misrobot.mismarketing.pojo.mismarketing.dao.UserDistrictInfo">
+
+        <id column="userid" property="userid" jdbcType="BIGINT"/>
+
+        <result column="name" property="districtName" jdbcType="VARCHAR"/>
+
+        <result column="username" property="userName" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <resultMap id="weeklyUserInfo" type="com.misrobot.mismarketing.pojo.weekly.WeeklyUserInfo">
+
+        <id column="userid" property="userid" jdbcType="BIGINT"/>
+
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        userid,username,loginname,logintime,status,password,salt,isfirst,expiretime,type,isupdate
+    </sql>
+
+    <!--根据登陆名查询-->
+    <select id="getLoginInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        m.userid,m.username,m.loginname,m.logintime,m.status,m.password,m.salt,m.isfirst,m.expiretime,m.type,m.isupdate,
+        d.name as districtname,d.id as districtid
+        FROM mismarketing_user m left join district d on m.district_id=d.id
+        <where>
+            <!--<if test="loginname != null">-->
+            <!--loginname = #{loginname}-->
+            <!--</if>-->
+            loginname = #{loginname}
+            and status !=1
+        </where>
+    </select>
+
+    <!--修改状态-->
+    <update id="updateUserStatus" parameterType="java.lang.Long">
+        UPDATE  mismarketing_user SET status = 3
+        WHERE userid = #{userid}
+    </update>
+
+    <!--软删除-->
+    <update id="deleteUserStatus" parameterType="java.lang.Long">
+     delete from  mismarketing_user  where userid = #{userid}
+    </update>
+
+    <!--查询所有管理用户信息-->
+    <select id="getAlluserInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        m.userid,m.username,m.loginname,m.logintime,m.status,m.password,m.salt,m.isfirst,m.expiretime,m.type,m.isupdate,
+        z.name as districtname,z.id as districtid,z.pid,z.pname
+        FROM mismarketing_user m left join
+        (SELECT d.id as id,d.name as name,t.id as pid,t.name as pname
+        from district d left join  district t on  d.province_id=t.id) z on m.district_id=z.id
+        <where>
+            m.status !=1
+        </where>
+        ORDER BY m.type ASC ,m.createtime DESC
+        <if test="requestpage != null">
+            LIMIT #{requestpage},#{sizeperpage}
+        </if>
+    </select>
+
+    <select id="getAlluserCounts" resultType="int">
+        SELECT count(1)
+        FROM mismarketing_user
+        <where>
+            status !=1
+        </where>
+    </select>
+
+    <!--查询登陆的管理用户信息-->
+    <select id="getAdminUserById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        m.userid,m.username,m.loginname,m.logintime,m.status,m.password,m.salt,m.isfirst,m.expiretime,m.type,m.isupdate,
+        d.name as districtname,d.id as districtid,d.province_id
+        FROM mismarketing_user m left join district d on m.district_id=d.id
+        <where>
+            m.userid = #{userid} AND m.status!=1
+        </where>
+    </select>
+
+    <!--修改是否第一次登陆-->
+    <update id="updateUserLogin" parameterType="java.lang.Long">
+        UPDATE  mismarketing_user SET isfirst = 1,logintime=now()
+        WHERE userid = #{userid}
+    </update>
+
+    <!--修改成第一次登陆-->
+    <update id="updateFirstLogin" parameterType="java.lang.Long">
+        UPDATE  mismarketing_user SET isfirst =0,logintime=null
+        WHERE userid = #{userid}
+    </update>
+
+    <insert id="addAdminUser" parameterType="com.misrobot.mismarketing.pojo.mismarketing.dao.MismarketingUser"
+            useGeneratedKeys="true" keyProperty="userid" keyColumn="userid">
+        INSERT INTO mismarketing_user
+
+        <trim suffixOverrides="," suffix=")" prefix="(">
+
+            <if test="loginname != null">loginname,</if>
+
+            <if test="pwd != null">password,</if>
+
+            <if test="username != null">username,</if>
+
+            <if test="type != null">type,</if>
+
+            <if test="isfirst != null">isfirst,</if>
+
+            <if test="status != null">status,</if>
+
+            <if test="logintime != null">logintime,</if>
+
+            <if test="createtime != null">createtime,</if>
+
+            <if test="salt != null">salt,</if>
+
+            <if test="updatetime != null">updatetime,</if>
+
+            <if test="activatetime != null">activatetime,</if>
+
+            <if test="expiretime != null">expiretime,</if>
+
+            <if test="districtid != null">district_id,</if>
+        </trim>
+
+        <trim suffixOverrides="," suffix=")" prefix="values (">
+
+            <if test="loginname != null">#{loginname,jdbcType=VARCHAR},</if>
+
+            <if test="pwd != null">#{pwd,jdbcType=VARCHAR},</if>
+
+            <!--<if test="username != null"> #{username,jdbcType=TIMESTAMP}, </if>-->
+            <if test="username != null">#{username,jdbcType=VARCHAR},</if>
+
+            <if test="type != null">#{type,jdbcType=DECIMAL},</if>
+
+            <if test="isfirst != null">#{isfirst,jdbcType=DECIMAL},</if>
+
+            <if test="status != null">#{status,jdbcType=DECIMAL},</if>
+
+            <if test="logintime != null">#{logintime,jdbcType=TIMESTAMP},</if>
+
+            <if test="createtime != null">#{createtime,jdbcType=TIMESTAMP},</if>
+
+            <if test="salt != null">#{salt,jdbcType=VARCHAR},</if>
+
+            <if test="updatetime != null">#{updatetime,jdbcType=TIMESTAMP},</if>
+
+            <if test="activatetime != null">#{activatetime,jdbcType=TIMESTAMP},</if>
+
+            <if test="expiretime != null">#{expiretime,jdbcType=TIMESTAMP},</if>
+
+            <if test="districtid != null">#{districtid,jdbcType=INTEGER},</if>
+
+        </trim>
+    </insert>
+
+    <!--查看登录名是否重复-->
+    <select id="findUserByLoginName" resultType="int" parameterType="java.lang.String">
+        SELECT count(1)
+        FROM mismarketing_user
+        <where>
+            loginname = #{loginname} AND status!=1
+        </where>
+
+    </select>
+
+    <!--后台管理重置密码-->
+    <update id="updateAdminUser" parameterType="com.misrobot.mismarketing.pojo.mismarketing.dao.MismarketingUser">
+
+        UPDATE mismarketing_user
+        <set>
+            <if test="pwd != null">
+                password = #{pwd},
+                isfirst=0,
+                logintime=null,
+                isupdate=1,
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="loginname != null">
+                loginname = #{loginname},
+            </if>
+            <if test="districtid != null">
+                district_id = #{districtid},
+            </if>
+            updatetime=now()
+        </set>
+        WHERE userid = #{userid}
+    </update>
+
+    <!--后台管理修改自己的密码-->
+    <update id="updateUserPWD" parameterType="com.misrobot.mismarketing.pojo.mismarketing.dao.MismarketingUser">
+        UPDATE mismarketing_user
+        <set>
+            isfirst=1,
+            isupdate=0,
+            <if test="pwd != null">
+                password = #{pwd},
+
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="loginname != null">
+                loginname = #{loginname},
+            </if>
+            <if test="districtid != null">
+                district_id = #{districtid},
+            </if>
+            updatetime=now()
+        </set>
+        WHERE userid = #{userid}
+    </update>
+
+    <!--pad修改密码-->
+    <update id="updatePadUser" parameterType="com.misrobot.mismarketing.pojo.mismarketing.dao.MismarketingUser">
+
+        UPDATE mismarketing_user
+        <set>
+            <if test="pwd != null">
+                password = #{pwd},isupdate=0,
+            </if>
+            updatetime=now()
+        </set>
+        WHERE userid = #{userid}
+    </update>
+
+    <update id="updateAdminUserPwd"
+            parameterType="com.misrobot.mismarketing.pojo.mismarketing.dao.MismarketingUser">
+        UPDATE mismarketing_user
+        <set>
+            <if test="pwd != null">
+                password = #{pwd},isupdate=0,isfirst=1,
+            </if>
+            updatetime=now()
+        </set>
+        WHERE userid = #{userid}
+    </update>
+
+    <!--批量激活成功-->
+    <update id="updateAdminActivate" parameterType="java.util.List">
+        UPDATE mismarketing_user set status=0 , expiretime=DATE_ADD(expiretime,INTERVAL 100 DAY)
+        where userid in
+        <foreach collection="list" item="userids" index="index" open="(" separator="," close=")">
+            #{userids.userid}
+        </foreach>
+    </update>
+
+    <!--过滤查询需要激活的用户-->
+    <select id="getActivateUser" resultMap="UserResultMap" parameterType="java.util.Map">
+        SELECT m.userid,m.username,m.loginname,m.expiretime,m.type,TIMESTAMPDIFF(DAY,now(),m.expiretime)as activateDay,
+        z.name as districtname,m.district_id as districtid,z.pid,z.pname
+        FROM mismarketing_user m left join
+        (SELECT d.id as id,d.name as name,t.id as pid,t.name as pname
+        from district d left join  district t on  d.province_id=t.id) z on m.district_id=z.id
+        <where>
+            1 = 1
+            <if test="activateDays!=null">
+                AND TIMESTAMPDIFF(DAY,now(),expiretime) &lt;#{activateDays}
+            </if>
+            <if test="username != null">
+                AND username LIKE concat('%',#{username},'%')
+            </if>
+            <if test="begintime != null">
+                AND createtime >= #{begintime}
+            </if>
+            <if test="endtime != null">
+                AND createtime &lt;= #{endtime}
+            </if>
+            <if test="type != null">
+                AND type= #{type}
+            </if>
+            <if test="status != null">
+                AND status= #{status}
+            </if>
+            <if test="status == null">
+                AND status!=1
+            </if>
+        </where>
+        ORDER BY activateDay
+        <if test="requestpage != null">
+            LIMIT #{requestpage},#{sizeperpage}
+        </if>
+    </select>
+
+    <select id="getActivateCounts" resultType="int" parameterType="java.util.Map">
+        SELECT count(1)
+        FROM mismarketing_user
+        <where>
+            1 = 1
+            <if test="activateDays!=null">
+                AND TIMESTAMPDIFF(DAY,now(),expiretime) >= 0
+                AND TIMESTAMPDIFF(DAY,now(),expiretime) &lt;#{activateDays}
+            </if>
+            <if test="username != null">
+                AND username LIKE concat('%',#{username},'%')
+            </if>
+            <if test="begintime != null">
+                AND createtime >= #{begintime}
+            </if>
+            <if test="endtime != null">
+                AND createtime &lt;= #{endtime}
+            </if>
+            <if test="type != null">
+                AND type= #{type}
+            </if>
+            <if test="status != null">
+                AND status= #{status}
+            </if>
+            <if test="status == null">
+                AND status= 0
+            </if>
+        </where>
+    </select>
+
+    <!--获取销售员所在的办事处-->
+    <select id="getDistrictNameByuid" parameterType="hashmap" resultMap="UserDistrictInfo">
+        SELECT d.name,m.userid,m.username FROM mismarketing_user m  LEFT JOIN district d ON  m.district_id=d.id WHERE  m.userid=#{userid} AND
+        m.`status`=0
+    </select>
+
+    <!--获取所有销售人员的数量-->
+    <select id="getSaleCounts" resultType="int">
+        SELECT count(1) FROM mismarketing_user WHERE status=0
+    </select>
+
+    <select id="getAllUsers" resultMap="weeklyUserInfo" parameterType="hashmap">
+        SELECT userid,username FROM mismarketing_user WHERE status=0
+
+        <if test="username!=null">
+            AND username LIKE concat('%',#{username},'%')
+        </if>
+    </select>
+</mapper>

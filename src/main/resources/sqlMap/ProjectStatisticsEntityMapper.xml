@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--<mapper namespace="com.misrobot.mismarketing.dao.project.ProjectStatisticsEntityMapper">-->
+<mapper namespace="com.misrobot.mismarketing.dao.project.ProjectStatisticsEntityMapper">
+    <resultMap id="BaseResultMap" type="com.misrobot.mismarketing.entity.ProjectStatisticsEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+
+        <result column="id"
+                jdbcType="INTEGER"
+                property="id"/>
+
+        <result column="project_id"
+                jdbcType="INTEGER"
+                property="projectid"/>
+
+        <result column="money"
+                jdbcType="DECIMAL"
+                property="money"/>
+
+        <result column="year_"
+                jdbcType="INTEGER"
+                property="year_"/>
+
+        <result column="month_"
+                jdbcType="INTEGER"
+                property="month_"/>
+
+        <result column="status"
+                jdbcType="INTEGER"
+                property="status"/>
+
+        <result column="create_time"
+                jdbcType="TIMESTAMP"
+                property="createtime"/>
+
+        <result column="user_id"
+                jdbcType="INTEGER"
+                property="userid"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+            id,
+            project_id,
+            money,
+            year_,
+            month_,
+            status,
+            create_time,
+            user_id
+    </sql>
+
+    <select id="findAllRecords" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_statistics
+    </select>
+
+    <select id="findByUserID" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_statistics where user_id = #{userid, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_statistics where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from project_statistics where id = #{id, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByProjectID" parameterType="java.lang.Integer">
+        delete from project_statistics where project_id = #{projectid, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByuserid" parameterType="java.lang.Integer">
+        delete from project_statistics where user_id = #{userid, jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.misrobot.mismarketing.entity.ProjectStatisticsEntity">
+        insert into project_statistics
+            (id,
+            project_id,
+            money,
+            year_,
+            month_,
+            status,
+            create_time,
+            user_id)
+        values
+            (#{id, jdbcType=INTEGER},
+            #{projectid, jdbcType=INTEGER},
+            #{money, jdbcType=DECIMAL},
+            #{year_, jdbcType=INTEGER},
+            #{month_, jdbcType=INTEGER},
+            #{status, jdbcType=INTEGER},
+            #{createtime, jdbcType=TIMESTAMP},
+            #{userid, jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.misrobot.mismarketing.entity.ProjectStatisticsEntity">
+        insert into project_statistics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="projectid != null">
+                project_id,
+            </if>
+
+            <if test="money != null">
+                money,
+            </if>
+
+            <if test="year != null">
+                year_,
+            </if>
+
+            <if test="month != null">
+                month_,
+            </if>
+
+            <if test="status != null">
+                status,
+            </if>
+
+            <if test="createtime != null">
+                create_time,
+            </if>
+
+            <if test="userid != null">
+                user_id,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id, jdbcType=INTEGER},
+            </if>
+
+            <if test="projectid != null">
+                #{projectid, jdbcType=INTEGER},
+            </if>
+
+            <if test="money != null">
+                #{money, jdbcType=DECIMAL},
+            </if>
+
+            <if test="year_ != null">
+                #{year_, jdbcType=INTEGER},
+            </if>
+
+            <if test="month_ != null">
+                #{month_, jdbcType=INTEGER},
+            </if>
+
+            <if test="status != null">
+                #{status, jdbcType=INTEGER},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime, jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="userid != null">
+                #{userid, jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.misrobot.mismarketing.entity.ProjectStatisticsEntity">
+        update project_statistics
+        <set>
+            <if test="projectid != null">
+                project_id = #{projectid, jdbcType=INTEGER},
+            </if>
+            <if test="money != null">
+                money = #{money, jdbcType=DECIMAL},
+            </if>
+            <if test="year_ != null">
+                year_ = #{year_, jdbcType=INTEGER},
+            </if>
+            <if test="month_ != null">
+                month_ = #{month_, jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status, jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                create_time = #{createtime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="userid != null">
+                user_id = #{userid, jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByProjectID" parameterType="com.misrobot.mismarketing.entity.ProjectStatisticsEntity">
+        update project_statistics
+        <set>
+            <if test="projectid != null">
+                project_id = #{projectid, jdbcType=INTEGER},
+            </if>
+            <if test="money != null">
+                money = #{money, jdbcType=DECIMAL},
+            </if>
+            <if test="year_ != null">
+                year_ = #{year_, jdbcType=INTEGER},
+            </if>
+            <if test="month_ != null">
+                month_ = #{month_, jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status, jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                create_time = #{createtime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="userid != null">
+                user_id = #{userid, jdbcType=INTEGER},
+            </if>
+        </set>
+        where project_id = #{projectid, jdbcType=INTEGER}
+    </update>
+
+    <update id="updateProjectStatisticsByProjectID" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update project_statistics
+            <set>
+                <if test="item.projectid != null">
+                    project_id = #{item.projectid, jdbcType=INTEGER},
+                </if>
+                <if test="item.money != null">
+                    money = #{item.money, jdbcType=DECIMAL},
+                </if>
+                <if test="item.year_ != null">
+                    year_ = #{item.year_, jdbcType=INTEGER},
+                </if>
+                <if test="item.month_ != null">
+                    month_ = #{item.month_, jdbcType=INTEGER},
+                </if>
+                <if test="item.status != null">
+                    status = #{item.status, jdbcType=INTEGER},
+                </if>
+                <if test="item.createtime != null">
+                    create_time = #{item.createtime, jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.userid != null">
+                    user_id = #{item.userid, jdbcType=INTEGER},
+                </if>
+            </set>
+            where project_id = #{item.projectid, jdbcType=INTEGER}
+        </foreach>
+    </update>
+
+</mapper>
